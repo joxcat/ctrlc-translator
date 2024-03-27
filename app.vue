@@ -29,7 +29,11 @@
         click: clearTranslations,
       }]"
     />
-    <UTable class="max-w-full" :rows="translations" />
+    <UTable 
+      class="w-full"
+      :ui="{ td: { base: 'max-w-[0] text-wrap' } }"
+      :rows="translations"
+    />
   </UContainer>
 </template>
 

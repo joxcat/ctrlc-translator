@@ -7,8 +7,8 @@
     "distDir": "../.output/public"
   },
   "package": {
-    "productName": "Translator",
-    "version": "0.1.0"
+    "productName": "ctrlc-translator",
+    "version": "0.1.1"
   },
   "tauri": {
     "allowlist": {
@@ -29,7 +29,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.johan.translator",
+      "identifier": "com.johan.ctrlc-translator",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
@@ -58,7 +58,7 @@
         "fullscreen": false,
         "height": 600,
         "resizable": true,
-        "title": "Translator",
+        "title": "CTRL-C Translator",
         "width": 800
       }
     ]
