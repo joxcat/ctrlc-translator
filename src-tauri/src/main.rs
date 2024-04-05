@@ -30,6 +30,10 @@ fn contains_remove(set: &mut HashSet<Key>, keys: &[Key]) -> bool {
 static mut CLIPBOARD_INITED: bool = false;
 static mut LISTENING_CLIPBOARD: bool = false;
 #[cfg(feature = "google")]
+static mut TRANSLATION_FROM_LANG: Lang = Lang::Fr;
+#[cfg(feature = "libretranslate")]
+static mut TRANSLATION_FROM_LANG: Language = Language::French;
+#[cfg(feature = "google")]
 static mut TRANSLATION_TO_LANG: Lang = Lang::En;
 #[cfg(feature = "libretranslate")]
 static mut TRANSLATION_TO_LANG: Language = Language::English;
@@ -118,7 +122,7 @@ fn init_clipboard_reader(window: Window) {
                     unsafe {
                         #[allow(static_mut_refs)]
                         let translation = translator
-                            .translate(&res, &Lang::Auto, &TRANSLATION_TO_LANG)
+                            .translate(&res, &TRANSLATION_FROM_LANG, &TRANSLATION_TO_LANG)
                             .map(|res| res.text)
                             .unwrap_or_default();
 
@@ -139,7 +143,7 @@ fn init_clipboard_reader(window: Window) {
                     unsafe {
                         runtime.block_on(async {
                             let translation = translate_url(
-                                Language::Detect,
+                                TRANSLATION_FROM_LANG,
                                 TRANSLATION_TO_LANG,
                                 &res,
                                 &"https://translate.terraprint.co/".to_string(),
@@ -181,6 +185,22 @@ fn set_clipboard_reader(enabled: bool) {
 }
 
 #[tauri::command]
+fn set_source_language(source_language: String) {
+    #[cfg(feature = "google")]
+    let lang = Lang::from_str(&source_language);
+    #[cfg(feature = "libretranslate")]
+    let lang = Language::from(&source_language);
+
+    if let Ok(lang) = lang {
+        log::debug!("set target language to: {source_language}");
+        unsafe {
+            TRANSLATION_FROM_LANG = lang;
+        }
+    } else {
+        log::warn!("Invalid language: {source_language}");
+    }
+}
+#[tauri::command]
 fn set_target_language(target_language: String) {
     #[cfg(feature = "google")]
     let lang = Lang::from_str(&target_language);
@@ -210,6 +230,7 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             init_clipboard_reader,
             set_clipboard_reader,
+            set_source_language,
             set_target_language,
         ])
         .run(tauri::generate_context!())

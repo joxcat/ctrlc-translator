@@ -1,5 +1,15 @@
 <template>
   <UContainer class="pt-4 sm:pt-6 lg:pt-8">
+    <UFormGroup label="Language source">
+      <USelect 
+        color="primary"
+        variant="outline"
+        :options="targetLanguages"
+        value="fr"
+        @change="selectSourceLanguage"
+        option-attribute="name"
+      />
+    </UFormGroup>
     <UFormGroup label="Language cible">
       <USelect 
         color="primary"
@@ -88,6 +98,9 @@ function clearTranslations() {
 }
 function selectTargetLanguage(lang: any) {  
   invoke('set_target_language', { targetLanguage: lang.target.value });
+}
+function selectSourceLanguage(lang: any) {  
+  invoke('set_source_language', { sourceLanguage: lang.target.value });
 }
 
 onBeforeUnmount(() => {
